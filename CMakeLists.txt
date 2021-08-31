@@ -218,6 +218,9 @@ add_executable(mmWaveQuickConfig src/mmWaveQuickConfig.cpp)
 target_link_libraries(mmWaveQuickConfig ${catkin_LIBRARIES} mmwave)
 add_dependencies(mmWaveQuickConfig ${catkin_EXPORTED_TARGETS} mmwave)
 
+add_executable(ti_mmwave_altitude_node src/altitude_node.cpp)
+target_link_libraries(ti_mmwave_altitude_node ${catkin_LIBRARIES} mmwave)
+
 #############
 ## Testing ##
 #############
