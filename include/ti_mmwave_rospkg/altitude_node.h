@@ -4,8 +4,8 @@
 
 #ifndef TI_MMWAVE_ROSPKG_ALTITUDE_NODE_H
 #define TI_MMWAVE_ROSPKG_ALTITUDE_NODE_H
-#include <ros/ros.h>
 #include <queue>
+#include <ros/ros.h>
 #include <ti_mmwave_rospkg/RadarScan.h>
 
 class AltitudeNode {
@@ -15,7 +15,9 @@ public:
 
   void radarScanCallback(const ti_mmwave_rospkg::RadarScan::ConstPtr &msg);
 
-  void updateQueue(const ti_mmwave_rospkg::RadarScan& scan);
+  void updateQueue(const ti_mmwave_rospkg::RadarScan &scan);
+
+  void updateFilter(const ti_mmwave_rospkg::RadarScan &scan);
 
   std::pair<double, double> getRangeAndVel();
 
@@ -23,14 +25,14 @@ private:
   ros::Publisher pub_range_;
   ros::Subscriber sub_radar_packet_;
 
-  std::deque<ti_mmwave_rospkg::RadarScan> scan_queue_;
+  double min_intensity_{15.0};      // [? whatever]
+  double max_bearing_{15.0/180*M_PI};        // [rad]
 
-  double min_intensity_{10.0};  // [? whatever]
-  double max_bearing_{25.0};    // [deg]
-  double sliding_window_time_{0.5}; //[s]
+  double mean_{0.0}, var_{0.0};
+  double measurement_noise_{0.5};
+  double process_noise_{1.0}; // [m] (gets scaled by time)
 
-  double mean, var;
-  double measurement_noise = 1.0;
+  ros::Time last_timestamp_;
 };
 
 #endif // TI_MMWAVE_ROSPKG_ALTITUDE_NODE_H
