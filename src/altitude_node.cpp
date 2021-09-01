@@ -54,7 +54,7 @@ void AltitudeNode::updateFilter(const ti_mmwave_rospkg::RadarScan &scan) {
   mean_ += K * y;
   var_ = (1.0 - K) * var_;
 
-  ROS_WARN_STREAM(mean_ << "\t" << var_);
+  //ROS_WARN_STREAM(mean_ << "\t" << var_);
   last_timestamp_ = scan.header.stamp;
 }
 

@@ -398,7 +398,7 @@ void *DataUARTHandler::sortIncomingData( void )
 
                         // Map mmWave sensor coordinates to ROS coordinate system
                         RScan->points[i].x = temp[1];   // ROS standard coordinate system X-axis is forward which is the mmWave sensor Y-axis
-                        RScan->points[i].y = -temp[0];  // ROS standard coordinate system Y-axis is left which is the mmWave sensor -(X-axis)
+                        RScan->points[i].y = temp[0];  // ROS standard coordinate system Y-axis is left which is the mmWave sensor -(X-axis)
                         RScan->points[i].z = temp[2];   // ROS standard coordinate system Z-axis is up which is the same as mmWave sensor Z-axis
                         RScan->points[i].intensity = temp[5];
 
@@ -407,7 +407,7 @@ void *DataUARTHandler::sortIncomingData( void )
 
                         radarscan.point_id = i;
                         radarscan.x = temp[1];
-                        radarscan.y = -temp[0];
+                        radarscan.y = temp[0];
                         radarscan.z = temp[2];
                         radarscan.range = temp[4];
                         radarscan.velocity = temp[7];
