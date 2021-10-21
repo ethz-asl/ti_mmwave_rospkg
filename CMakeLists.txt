@@ -20,6 +20,7 @@ find_package(catkin REQUIRED
     message_generation
     pluginlib
     pcl_ros
+    roslint
 )
 
 ## Find system libraries
@@ -233,3 +234,9 @@ add_dependencies(mmWaveQuickConfig ${catkin_EXPORTED_TARGETS} mmwave)
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+##########################
+## Static code analysis ##
+##########################
+
+roslint_cpp()
