@@ -1,27 +1,31 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.10)
 project(ti_mmwave_rospkg)
 
-# Set target C++ standard and required compiler features
+##  Use C++14
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  nodelet
-  roscpp
-  serial
-  std_msgs
-  sensor_msgs
-  message_generation
-  pluginlib
-  pcl_ros
+## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
+## enforcing cleaner code.
+add_definitions(-Wall -Werror)
+
+# Find catkin macros and libraries
+find_package(catkin REQUIRED 
+  COMPONENTS
+    nodelet
+    roscpp
+    serial
+    std_msgs
+    sensor_msgs
+    message_generation
+    pluginlib
+    pcl_ros
 )
 
+## Find system libraries
 find_package(Boost REQUIRED)
 find_package(Threads REQUIRED)
-find_package(PCL 1.7.2 REQUIRED)
+find_package(PCL REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -207,7 +211,6 @@ add_dependencies(mmwave ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TA
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
-set (CMAKE_CXX_STANDARD 11)
 
 add_executable(${PROJECT_NAME} src/mmWaveLoader.cpp include/ti_mmwave_rospkg/point_types.h)
 target_link_libraries(mmwave ${serial_LIBRARIES})
