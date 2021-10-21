@@ -1,16 +1,25 @@
+/*
+ * \file
+ *
+ *  comm srv
+ *
+ *
+ * Copyright? (C) 2017 Texas Instruments Incorporated - http://www.ti.com/
+ */
+
 #include "ti_mmwave_rospkg/mmWaveCommSrv.h"
 
 namespace ti_mmwave_rospkg
 {
 
-PLUGINLIB_EXPORT_CLASS(ti_mmwave_rospkg::mmWaveCommSrv, nodelet::Nodelet);
+  PLUGINLIB_EXPORT_CLASS(ti_mmwave_rospkg::mmWaveCommSrv, nodelet::Nodelet);
 
-mmWaveCommSrv::mmWaveCommSrv() {}
+  mmWaveCommSrv::mmWaveCommSrv() {}
 
-void mmWaveCommSrv::onInit()
-{
+  void mmWaveCommSrv::onInit()
+  {
     ros::NodeHandle private_nh = getPrivateNodeHandle();
-    ros::NodeHandle private_nh2("~"); // follow namespace for multiple sensors
+    ros::NodeHandle private_nh2("~");  // follow namespace for multiple sensors
 
     private_nh2.getParam("command_port", mySerialPort);
 
@@ -29,37 +38,45 @@ void mmWaveCommSrv::onInit()
     commSrv = private_nh.advertiseService("/mmWaveCLI", &mmWaveCommSrv::commSrv_cb, this);
 
     NODELET_DEBUG("mmWaveCommsrv: Finished onInit function");
-}
+  }
 
-
-bool mmWaveCommSrv::commSrv_cb(mmWaveCLI::Request &req , mmWaveCLI::Response &res) {
+  bool mmWaveCommSrv::commSrv_cb(mmWaveCLI::Request &req, mmWaveCLI::Response &res)
+  {
     NODELET_DEBUG("mmWaveCommSrv: Port is \"%s\" and baud rate is %d", mySerialPort.c_str(), myBaudRate);
 
     /*Open Serial port and error check*/
     serial::Serial mySerialObject("", myBaudRate, serial::Timeout::simpleTimeout(1000));
     mySerialObject.setPort(mySerialPort.c_str());
-    try {
+    try
+    {
+      mySerialObject.open();
+    }
+    catch (std::exception &e1)
+    {
+      ROS_INFO("mmWaveCommSrv: Failed to open User serial port with error: %s", e1.what());
+      ROS_INFO("mmWaveCommSrv: Waiting 20 seconds before trying again...");
+      try
+      {
+        // Wait 20 seconds and try to open serial port again
+        ros::Duration(20).sleep();
         mySerialObject.open();
-    } catch (std::exception &e1) {
-        ROS_INFO("mmWaveCommSrv: Failed to open User serial port with error: %s", e1.what());
-        ROS_INFO("mmWaveCommSrv: Waiting 20 seconds before trying again...");
-        try {
-            // Wait 20 seconds and try to open serial port again
-            ros::Duration(20).sleep();
-            mySerialObject.open();
-            mySerialObject.write("\n"); // Flush the port
-        } catch (std::exception &e2) {
-            ROS_ERROR("mmWaveCommSrv: Failed second time to open User serial port, error: %s", e1.what());
-            NODELET_ERROR("mmWaveCommSrv: Port could not be opened. Port is \"%s\" and baud rate is %d", mySerialPort.c_str(), myBaudRate);
-            return false;
-        }
+        mySerialObject.write("\n");  // Flush the port
+      }
+      catch (std::exception &e2)
+      {
+        ROS_ERROR("mmWaveCommSrv: Failed second time to open User serial port, error: %s", e1.what());
+        NODELET_ERROR("mmWaveCommSrv: Port could not be opened.");
+        NODELET_ERROR("Port is \"%s\" and baud rate is %d", mySerialPort.c_str(), myBaudRate);
+        return false;
+      }
     }
 
     /*Read any previous pending response(s)*/
-    while (mySerialObject.available() > 0) {
-        mySerialObject.readline(res.resp, 1024, ":/>");
-        ROS_INFO("mmWaveCommSrv: Received (previous) response from sensor: '%s'", res.resp.c_str());
-        res.resp = "";
+    while (mySerialObject.available() > 0)
+    {
+      mySerialObject.readline(res.resp, 1024, ":/>");
+      ROS_INFO("mmWaveCommSrv: Received (previous) response from sensor: '%s'", res.resp.c_str());
+      res.resp = "";
     }
 
     /*Send out command received from the client*/
@@ -75,5 +92,5 @@ bool mmWaveCommSrv::commSrv_cb(mmWaveCLI::Request &req , mmWaveCLI::Response &re
     mySerialObject.close();
 
     return true;
-}
-}
+  }
+}  // namespace ti_mmwave_rospkg
