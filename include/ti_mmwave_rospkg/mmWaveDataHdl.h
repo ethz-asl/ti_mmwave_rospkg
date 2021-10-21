@@ -1,9 +1,9 @@
 /*
- * mmWaveCommSrv.hpp
+ * mmWaveDataHdl.h
  *
  * This file defines a ROS nodelet which will open up a serial port provided by the user
  * at a certain baud rate (also provided by user) that will interface with the 1443EVM mmwDemo
- * User UART to be used for board configuration.
+ * Data UART to be used for board configuration.
  *
  *                       
  * Copyright (C) 2017 Texas Instruments Incorporated - http://www.ti.com/ 
@@ -38,8 +38,8 @@
  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
 */
-#ifndef MMWAVE_COMM_SRV_H
-#define MMWAVE_COMM_SRV_H
+#ifndef TI_MMWAVE_ROSPKG_MMWAVEDATAHDL_H
+#define TI_MMWAVE_ROSPKG_MMWAVEDATAHDL_H
 
 /*Include ROS specific headers*/
 #include "ros/ros.h"
@@ -54,30 +54,21 @@
 #include <sstream>
 
 /*mmWave Driver Headers*/
-#include <ti_mmwave_rospkg/mmWaveCLI.h>
+#include "ti_mmwave_rospkg/DataHandlerClass.h"
 
 namespace ti_mmwave_rospkg
 {
 
-class mmWaveCommSrv : public nodelet::Nodelet
+class mmWaveDataHdl : public nodelet::Nodelet
 {
-   public:
-   
-   mmWaveCommSrv();
-   
-   private:
-   
-   virtual void onInit();
-   
-   bool commSrv_cb(ti_mmwave_rospkg::mmWaveCLI::Request  &req, ti_mmwave_rospkg::mmWaveCLI::Response &res);
-   
-   ros::ServiceServer commSrv;
-   
-   std::string mySerialPort;
-   
-   int myBaudRate;
-}; //Class mmWaveCommSrv 
+    public:
 
-} //namespace ti_mmwave_rospkg 
+    mmWaveDataHdl();
 
-#endif
+    private:
+
+    virtual void onInit();
+};
+} // namespace ti_mmwave_rospkg
+
+#endif  // TI_MMWAVE_ROSPKG_MMWAVEDATAHDL_H

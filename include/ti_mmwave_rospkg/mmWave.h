@@ -38,14 +38,14 @@
 */
 
 
-#ifndef _TI_IWR14XX_
-#define _TI_IWR14XX_
+#ifndef TI_MMWAVE_ROSPKG_MMWAVE_H
+#define TI_MMWAVE_ROSPKG_MMWAVE_H
+
+#include "serial/serial.h"
 
 #include <iostream>
-#include <iostream>
 #include <cstdio>
-#include "serial/serial.h"
-#include "ros/ros.h"
+#include <ros/ros.h>
 #include <boost/thread.hpp>
 #include <cstdint>
 
@@ -227,4 +227,4 @@ struct mmwDataPacket{
 
 const uint8_t magicWord[8] = {2, 1, 4, 3, 6, 5, 8, 7};
 
-#endif
+#endif  // TI_MMWAVE_ROSPKG_MMWAVE_H
