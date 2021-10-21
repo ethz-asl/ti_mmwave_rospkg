@@ -4,39 +4,38 @@
  * This file contains various defines used within this package.
  *
  *
- * Copyright (C) 2017 Texas Instruments Incorporated - http://www.ti.com/ 
+ * Copyright (C) 2017 Texas Instruments Incorporated - http://www.ti.com/
  *
  *
- *  Redistribution and use in source and binary forms, with or without 
- *  modification, are permitted provided that the following conditions 
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
  *  are met:
  *
- *    Redistributions of source code must retain the above copyright 
+ *    Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  *
  *    Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the 
- *    documentation and/or other materials provided with the   
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the
  *    distribution.
  *
  *    Neither the name of Texas Instruments Incorporated nor the names of
  *    its contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
- *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
  *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
  *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
-*/
-
+ */
 
 #ifndef TI_MMWAVE_ROSPKG_MMWAVE_H
 #define TI_MMWAVE_ROSPKG_MMWAVE_H
@@ -76,7 +75,8 @@ enum MmwDemo_Output_TLV_Types
     MMWDEMO_OUTPUT_MSG_MAX
 };
 
-enum SorterState {
+enum SorterState
+{
     READ_HEADER,
     CHECK_TLV_TYPE,
     READ_OBJ_STRUCT,
@@ -90,50 +90,51 @@ enum SorterState {
 };
 
 struct MmwDemo_output_message_header_t
-    {
-        /*! brief   Version: : MajorNum * 2^24 + MinorNum * 2^16 + BugfixNum * 2^8 + BuildNum   */
-        uint32_t version;
+{
+    /*! brief   Version: : MajorNum * 2^24 + MinorNum * 2^16 + BugfixNum * 2^8 + BuildNum   */
+    uint32_t version;
 
-        /*! @brief   Total packet length including header in Bytes */
-        uint32_t totalPacketLen;
+    /*! @brief   Total packet length including header in Bytes */
+    uint32_t totalPacketLen;
 
-        /*! @brief   platform type */
-        uint32_t platform;
+    /*! @brief   platform type */
+    uint32_t platform;
 
-        /*! @brief   Frame number */
-        uint32_t frameNumber;
+    /*! @brief   Frame number */
+    uint32_t frameNumber;
 
-        /*! @brief   Time in CPU cycles when the message was created. For XWR16xx: DSP CPU cycles, for XWR14xx: R4F CPU cycles */
-        uint32_t timeCpuCycles;
+    /*! @brief   Time in CPU cycles when the message was created.
+    For XWR16xx: DSP CPU cycles, for XWR14xx: R4F CPU cycles */
+    uint32_t timeCpuCycles;
 
-        /*! @brief   Number of detected objects */
-        uint32_t numDetectedObj;
+    /*! @brief   Number of detected objects */
+    uint32_t numDetectedObj;
 
-        /*! @brief   Number of TLVs */
-        uint32_t numTLVs;
+    /*! @brief   Number of TLVs */
+    uint32_t numTLVs;
 
-        /*! @brief   Sub-frame Number (not used with XWR14xx) */
-        uint32_t subFrameNumber;
-    };
+    /*! @brief   Sub-frame Number (not used with XWR14xx) */
+    uint32_t subFrameNumber;
+};
 
 // Detected object structure for mmWave SDK 1.x and 2.x
 struct MmwDemo_DetectedObj
-    {
-        uint16_t rangeIdx;     /*!< @brief Range index */
-        uint16_t dopplerIdx;   /*!< @brief Dopler index */
-        uint16_t peakVal;      /*!< @brief Peak value */
-        int16_t x;             /*!< @brief x - coordinate in meters. Q format depends on the range resolution */
-        int16_t y;             /*!< @brief y - coordinate in meters. Q format depends on the range resolution */
-        int16_t z;             /*!< @brief z - coordinate in meters. Q format depends on the range resolution */
-    };
+{
+    uint16_t rangeIdx;   /*!< @brief Range index */
+    uint16_t dopplerIdx; /*!< @brief Doppler index */
+    uint16_t peakVal;    /*!< @brief Peak value */
+    int16_t x;           /*!< @brief x - coordinate in meters. Q format depends on the range resolution */
+    int16_t y;           /*!< @brief y - coordinate in meters. Q format depends on the range resolution */
+    int16_t z;           /*!< @brief z - coordinate in meters. Q format depends on the range resolution */
+};
 
 // Detected object structures for mmWave SDK 3.x (DPIF_PointCloudCartesian_t and DPIF_PointCloudSideInfo_t)
 
 /**
-* @brief
-* Point cloud definition in Cartesian coordinate system - floating point format
-*
-*/
+ * @brief
+ * Point cloud definition in Cartesian coordinate system - floating point format
+ *
+ */
 typedef struct DPIF_PointCloudCartesian_t
 {
     /*! @brief x - coordinate in meters */
@@ -149,14 +150,14 @@ typedef struct DPIF_PointCloudCartesian_t
      * is moving away from the sensor and negative velocity means target
      * is moving towards the sensor. */
     float velocity;
-
-} DPIF_PointCloudCartesian;
+}
+DPIF_PointCloudCartesian;
 
 /**
-* @brief
-* Point cloud side information such as SNR and noise level
-*
-*/
+ * @brief
+ * Point cloud side information such as SNR and noise level
+ *
+ */
 typedef struct DPIF_PointCloudSideInfo_t
 {
     /*! @brief snr - CFAR cell to side noise ratio in dB expressed in 0.1 steps of dB */
@@ -164,8 +165,8 @@ typedef struct DPIF_PointCloudSideInfo_t
 
     /*! @brief y - CFAR noise level of the side of the detected cell in dB expressed in 0.1 steps of dB */
     int16_t noise;
-
-} DPIF_PointCloudSideInfo;
+}
+DPIF_PointCloudSideInfo;
 
 /**
  * @brief
@@ -175,25 +176,25 @@ typedef struct DPIF_PointCloudSideInfo_t
 typedef struct DPIF_PointCloudSpherical_t
 {
     /*! @brief     Range in meters */
-    float  range;
+    float range;
 
     /*! @brief     Azimuth angle in degrees in the range [-90,90],
      *             where positive angle represents the right hand side as viewed
      *             from the sensor towards the scene and negative angle
      *             represents left hand side */
-    float  azimuthAngle;
+    float azimuthAngle;
 
     /*! @brief     Elevation angle in degrees in the range [-90,90],
      *             where positive angle represents above the sensor and negative
      *             below the sensor */
-    float  elevAngle;
+    float elevAngle;
 
     /*! @brief  Doppler velocity estimate in m/s. Positive velocity means target
      *          is moving away from the sensor and negative velocity means target
      *          is moving towards the sensor. */
-    float    velocity;
-
-} DPIF_PointCloudSpherical;
+    float velocity;
+}
+DPIF_PointCloudSpherical;
 
 typedef volatile struct DPIF_CFARDetList_t
 {
@@ -208,20 +209,20 @@ typedef volatile struct DPIF_CFARDetList_t
 
     /*!< Noise level in steps of 0.1 dB */
     int16_t noise;
+}
+DPIF_CFARDetList;
 
-} DPIF_CFARDetList;
-
-
-struct mmwDataPacket{
+struct mmwDataPacket
+{
     MmwDemo_output_message_header_t header;
     uint16_t numObjOut;
 
-    uint16_t xyzQFormat; // only used for SDK 1.x and 2.x
-    MmwDemo_DetectedObj objOut; // only used for SDK 1.x and 2.x
+    uint16_t xyzQFormat;         // only used for SDK 1.x and 2.x
+    MmwDemo_DetectedObj objOut;  // only used for SDK 1.x and 2.x
 
-    DPIF_PointCloudCartesian_t objOut_cartes; // used for SDK 3.x (x, y, z, velocity)
-    DPIF_PointCloudSideInfo_t sideInfo; // used for SDK 3.x
-    DPIF_PointCloudSpherical_t objOut_spher; // used for SDK 3.x (range, azimuthAngle, elevAngle, velocity)
+    DPIF_PointCloudCartesian_t objOut_cartes;  // used for SDK 3.x (x, y, z, velocity)
+    DPIF_PointCloudSideInfo_t sideInfo;        // used for SDK 3.x
+    DPIF_PointCloudSpherical_t objOut_spher;   // used for SDK 3.x (range, azimuthAngle, elevAngle, velocity)
     DPIF_CFARDetList_t detList;
 };
 
