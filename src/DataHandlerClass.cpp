@@ -378,6 +378,8 @@ void *DataUARTHandler::sortIncomingData(void)
 
       // Get time
       RScan->header.stamp = ros::Time::now().toNSec() / 1e3;
+      // or from: https://github.com/radar-lab/ti_mmwave_rospkg/pull/27/files
+      pcl_conversions::toPCL(ros::Time::now(), RScan->header.stamp);
 
       RScan->header.frame_id = frameID;
       RScan->height = 1;
@@ -499,6 +501,14 @@ void *DataUARTHandler::sortIncomingData(void)
           // get object velocity (m/s)
           memcpy(&mmwData.objOut_cartes.velocity, &currentBufp->at(currentDatap), sizeof(mmwData.objOut_cartes.velocity));
           currentDatap += (sizeof(mmwData.objOut_cartes.velocity));
+
+          // from claude (not yet tested and used, also by him)
+          // get object range (m)
+          // memcpy( &mmwData.objOut_spher.range, &currentBufp->at(currentDatap), sizeof(mmwData.objOut_spher.range));
+          // currentDatap += (sizeof(mmwData.objOut_spher.range));
+
+          // memcpy( &mmwData.detList.rangeIdx, &currentBufp->at(currentDatap), sizeof(mmwData.detList.rangeIdx));
+          // currentDatap += (sizeof(mmwData.detList.rangeIdx));
 
           // Map mmWave sensor coordinates to ROS coordinate system
           RScan->points[i].x = mmwData.objOut_cartes.y;   // ROS standard X-axis is forward => Y-axis of mmWave sensor
