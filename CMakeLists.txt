@@ -144,8 +144,6 @@ include_directories(
   ${rt_INCLUDE_DIRS}
 )
 
-link_directories( ${Boost_LIBRARIES_DIRS} )
-
 
 ## Declare a C++ library
 add_library(mmwave
