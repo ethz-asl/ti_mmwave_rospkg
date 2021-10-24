@@ -135,17 +135,16 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${ti_mmwave_rospkg_INCLUDE_DIRS}
   ${pthread_INCLUDE_DIRS}
-  ${rt_INCLUDE_DIRS}
+  ${rt_INCLUDE_DIRS} # (?)
 )
 
-
-## Declare a C++ library
+## mmwave library
+# 1. declare cpp library
 add_library(mmwave
   src/mmWaveDataHdl.cpp
   src/mmWaveCommSrv.cpp
@@ -153,31 +152,49 @@ add_library(mmwave
   src/mmWaveQuickConfig.cpp
   src/ParameterParser.cpp
 )
+# 2. add dependencies
+add_dependencies(mmwave
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+)
+# 3. specify libraries to link executable targets against
+target_link_libraries(mmwave
+  ${serial_LIBRARIES}
+)
 
-## Add cmake target dependencies of the library
-## as an example, code may need to be generated before libraries
-## either from message generation or dynamic reconfigure
-add_dependencies(mmwave ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+## executable 1: ti_mmwave_rospkg (==${PROJECT_NAME}) executable
+# 1. Declare cpp executables
+add_executable(${PROJECT_NAME} 
+  src/mmWaveLoader.cpp
+  include/ti_mmwave_rospkg/point_types.h
+)
+# 2. add dependencies
+add_dependencies(${PROJECT_NAME}
+  ${catkin_EXPORTED_TARGETS}
+  ${serial_EXPORTED_TARGETS}
+  mmwave
+)
+# 3. specify libraries to link executable targets against
+target_link_libraries(${PROJECT_NAME} # (naming with "_node" standard?)
+  ${catkin_LIBRARIES}
+  ${serial_LIBRARIES}
+  mmwave
+)
 
-## Declare a C++ executable
-## With catkin_make all packages are built within a single CMake context
-## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/ti_mmwave_rospkg_node.cpp)
+## same for executable 2: mmWaveQuickConfig (never used that so far)
+add_executable(mmWaveQuickConfig
+  src/mmWaveQuickConfig.cpp
+)
+target_link_libraries(
+  mmWaveQuickConfig 
+  ${catkin_LIBRARIES}
+  mmwave
+)
+add_dependencies(mmWaveQuickConfig
+  ${catkin_EXPORTED_TARGETS}
+  mmwave
+)
 
-## Rename C++ executable without prefix
-## The above recommended prefix causes long target names, the following renames the
-## target back to the shorter version for ease of user use
-## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
-
-## Add cmake target dependencies of the executable
-## same as for the library above
-# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-## Specify libraries to link a library or executable target against
-# target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES}
-# )
 
 #############
 ## Install ##
@@ -213,15 +230,6 @@ add_dependencies(mmwave ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TA
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
-
-add_executable(${PROJECT_NAME} src/mmWaveLoader.cpp include/ti_mmwave_rospkg/point_types.h)
-target_link_libraries(mmwave ${serial_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} mmwave ${serial_LIBRARIES})
-add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS} mmwave ${serial_EXPORTED_TARGETS})
-
-add_executable(mmWaveQuickConfig src/mmWaveQuickConfig.cpp)
-target_link_libraries(mmWaveQuickConfig ${catkin_LIBRARIES} mmwave)
-add_dependencies(mmWaveQuickConfig ${catkin_EXPORTED_TARGETS} mmwave)
 
 #############
 ## Testing ##
