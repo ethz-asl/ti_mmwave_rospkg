@@ -26,7 +26,6 @@ find_package(catkin REQUIRED
 ## Find system libraries
 find_package(Boost REQUIRED)
 find_package(Threads REQUIRED)
-find_package(PCL REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -117,10 +116,17 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES mmwave
-  CATKIN_DEPENDS nodelet roscpp serial std_msgs
-#  DEPENDS system_lib
+  INCLUDE_DIRS 
+    include
+  LIBRARIES
+    mmwave
+  CATKIN_DEPENDS
+    nodelet
+    roscpp
+    serial
+    std_msgs
+  # DEPENDS
+  #   system_lib
 )
 
 ###########
@@ -130,19 +136,16 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
-include_directories( include
+include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
   ${ti_mmwave_rospkg_INCLUDE_DIRS}
-  ${PCL_INCLUDE_DIRS}
   ${pthread_INCLUDE_DIRS}
   ${rt_INCLUDE_DIRS}
 )
 
 link_directories( ${Boost_LIBRARIES_DIRS} )
 
-link_directories( ${PCL_LIBRARY_DIRS} )
-
-add_definitions(${PCL_DEFINITIONS})
 
 ## Declare a C++ library
 add_library(mmwave
