@@ -166,7 +166,7 @@ target_link_libraries(mmwave
 # 1. Declare cpp executables
 add_executable(${PROJECT_NAME} 
   src/mmWaveLoader.cpp
-  include/ti_mmwave_rospkg/point_types.h
+  # include/ti_mmwave_rospkg/point_types.h  # (needed?)
 )
 # 2. add dependencies
 add_dependencies(${PROJECT_NAME}
@@ -175,7 +175,7 @@ add_dependencies(${PROJECT_NAME}
   mmwave
 )
 # 3. specify libraries to link executable targets against
-target_link_libraries(${PROJECT_NAME} # (naming with "_node" standard?)
+target_link_libraries(${PROJECT_NAME}  # (naming with "_node" more standard?)
   ${catkin_LIBRARIES}
   ${serial_LIBRARIES}
   mmwave

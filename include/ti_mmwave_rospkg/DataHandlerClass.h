@@ -114,8 +114,8 @@ private:
   float vrange;
   float max_vel;
   float vvel;
-
   char *frameID;
+  
   /*Contains the name of the serial port*/
   char *dataSerialPort;
 

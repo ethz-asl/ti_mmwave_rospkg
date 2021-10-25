@@ -71,7 +71,7 @@ private:
   ros::ServiceServer commSrv;
 
   std::string mySerialPort;
-
+  std::string mmWaveCLIName;
   int myBaudRate;
 };
 

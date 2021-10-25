@@ -8,17 +8,17 @@
 
   <!-- mmWave_Manager node -->
   <node pkg="ti_mmwave_rospkg" type="ti_mmwave_rospkg" name="ti_mmwave" output="screen">
-    <param name="command_port" value="/dev/ttyACM0"  />
-    <param name="command_rate" value="115200"   />
-    <param name="data_port" value="/dev/ttyACM1"  />
-    <param name="data_rate" value="921600"   />
-    <param name="max_allowed_elevation_angle_deg" value="$(arg max_allowed_elevation_angle_deg)"   />
-    <param name="max_allowed_azimuth_angle_deg" value="$(arg max_allowed_azimuth_angle_deg)"   />
+    <param name="command_port" value="/dev/ttyACM0"/>
+    <param name="command_rate" value="115200"/>
+    <param name="data_port" value="/dev/ttyACM1"/>
+    <param name="data_rate" value="921600"/>
+    <param name="max_allowed_elevation_angle_deg" value="$(arg max_allowed_elevation_angle_deg)"/>
+    <param name="max_allowed_azimuth_angle_deg" value="$(arg max_allowed_azimuth_angle_deg)"/>
     <param name="frame_id" value="ti_mmwave"/>
   </node>
-  
+
   <!-- mmWaveQuickConfig node (terminates after configuring mmWave sensor) -->
-  <node pkg="ti_mmwave_rospkg" type="mmWaveQuickConfig" name="mmWaveQuickConfig" args="$(find ti_mmwave_rospkg)/cfg/1843/1843_long_range_0.cfg" output="screen" />
+  <node pkg="ti_mmwave_rospkg" type="mmWaveQuickConfig" name="mmWaveQuickConfig" args="$(find ti_mmwave_rospkg)/cfg/1843/long_range_0.cfg" output="screen"/>
 
   <!-- Static transform from map to base_radar_link for visualization of stand-alone mmWave sensor using Rviz -->
   <node pkg="tf" type="static_transform_publisher" name="static_tf_map_to_base_radar_link" args="0 0 0 0 0 0 ti_mmwave_pcl ti_mmwave 30"/>

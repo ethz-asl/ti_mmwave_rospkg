@@ -1,10 +1,40 @@
 /*
- * \file
+ * @file mmWaveQuickConfig.cpp
  *
- *  quick config
+ * @brief
+ * Reads the cfg file and calls service to send commands.
  *
+ * \par
+ * NOTE:
+ * (C) Copyright 2020 Texas Instruments, Inc.
  *
- * Copyright? (C) 2017 Texas Instruments Incorporated - http://www.ti.com/
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the
+ * distribution.
+ *
+ * Neither the name of Texas Instruments Incorporated nor the names of
+ * its contributors may be used to endorse or promote products derived
+ * from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "ti_mmwave_rospkg/mmWaveCLI.h"
@@ -20,7 +50,9 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "mmWaveQuickConfig");
   ros::NodeHandle nh;
+  ros::NodeHandle private_nh("~"); 
   ti_mmwave_rospkg::mmWaveCLI srv;
+
   if (argc != 2)
   {
     ROS_INFO("mmWaveQuickConfig: usage: mmWaveQuickConfig /file_directory/params.cfg");
@@ -31,11 +63,13 @@ int main(int argc, char **argv)
     ROS_INFO("mmWaveQuickConfig: Configuring mmWave device using config file: %s", argv[1]);
   }
 
-  ros::ServiceClient client = nh.serviceClient<ti_mmwave_rospkg::mmWaveCLI>("/mmWaveCLI");
+  std::string mmWaveCLIName; 
+  private_nh.getParam("mmWaveCLI_name", mmWaveCLIName); 
+  ros::ServiceClient client = nh.serviceClient<ti_mmwave_rospkg::mmWaveCLI>(mmWaveCLIName); 
   std::ifstream myParams;
   ti_mmwave_rospkg::ParameterParser parser;
   // wait 10s for service to become available
-  ros::service::waitForService("/mmWaveCLI", 10000);
+  ros::service::waitForService(mmWaveCLIName, 10000);
 
   // wait 0.5 secs to avoid multi-sensor conflicts
   ros::Duration(0.5).sleep();
