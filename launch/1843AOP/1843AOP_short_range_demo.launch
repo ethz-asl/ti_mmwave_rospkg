@@ -2,7 +2,7 @@
 
   <!-- Input arguments -->
   <arg name="device" value="1843AOP" doc="TI mmWave sensor device type [1843AOP, 6843AOP]"/>
-  <arg name="config" value="short_range_0" doc="TI mmWave sensor device configuration [short_range_0, medium_range_0, long_range_0, etc.]"/>
+  <arg name="config" value="short_range_30fps" doc="TI mmWave sensor device configuration [short_range_0, medium_range_0, long_range_0, etc.]"/>
   <arg name="max_allowed_elevation_angle_deg" default="60" doc="Maximum allowed elevation angle in degrees for detected object data [90 >= value > 0]}"/>
   <arg name="max_allowed_azimuth_angle_deg"  default="60" doc="Maximum allowed azimuth angle in degrees for detected object data [90 >= value > 0]}"/>
   <arg name="mmWaveCLI_name" default="/mmWaveCLI_0" doc="CLI name in case of multiple sensors [/mmWaveCLI_0, /mmWaveCLI_1, /mmWaveCLI_2]"/>
