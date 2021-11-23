@@ -9,32 +9,38 @@
 
 #include "ti_mmwave_rospkg/DataHandlerClass.h"
 #include <vector>
+#include <string>
 
 DataUARTHandler::DataUARTHandler(ros::NodeHandle *nh) : currentBufp(&pingPongBuffers[0]), nextBufp(&pingPongBuffers[1])
 {
-  DataUARTHandler_pub = nh->advertise<sensor_msgs::PointCloud2>("/ti_mmwave/radar_scan_pcl", 100);
-  radar_scan_pub = nh->advertise<ti_mmwave_rospkg::RadarScan>("/ti_mmwave/radar_scan", 100);
-  marker_pub = nh->advertise<visualization_msgs::Marker>("/ti_mmwave/radar_scan_markers", 100);
+  DataUARTHandler_pub = nh->advertise<sensor_msgs::PointCloud2>("radar_scan_pcl", 100);
+  radar_scan_pub = nh->advertise<ti_mmwave_rospkg::RadarScan>("radar_scan", 100);
+  marker_pub = nh->advertise<visualization_msgs::Marker>("radar_scan_markers", 100);
   maxAllowedElevationAngleDeg = 90;  // Use max angle if none specified
   maxAllowedAzimuthAngleDeg = 90;    // Use max angle if none specified
 
   // Wait for parameters
-  while (!nh->hasParam("/ti_mmwave/doppler_vel_resolution"))
+  std::string ns = ros::this_node::getNamespace();
+  ROS_WARN_STREAM("*** DataUARTHandler: ns = " << ns);
+  // while (!nh->hasParam("~doppler_vel_resolution"))  // does not work
+  // while (!nh->searchParam("doppler_vel_resolution"))  // not so nice
+  while (!nh->hasParam(ns + "/doppler_vel_resolution"))
   {
+    // ROS_WARN_STREAM("*** DataUARTHandler: in while loop");
   }
-
-  nh->getParam("/ti_mmwave/numAdcSamples", nr);
-  nh->getParam("/ti_mmwave/numLoops", nd);
-  nh->getParam("/ti_mmwave/num_TX", ntx);
-  nh->getParam("/ti_mmwave/f_s", fs);
-  nh->getParam("/ti_mmwave/f_c", fc);
-  nh->getParam("/ti_mmwave/BW", BW);
-  nh->getParam("/ti_mmwave/PRI", PRI);
-  nh->getParam("/ti_mmwave/t_fr", tfr);
-  nh->getParam("/ti_mmwave/max_range", max_range);
-  nh->getParam("/ti_mmwave/range_resolution", vrange);
-  nh->getParam("/ti_mmwave/max_doppler_vel", max_vel);
-  nh->getParam("/ti_mmwave/doppler_vel_resolution", vvel);
+  
+  nh->getParam("numAdcSamples", nr);
+  nh->getParam("numLoops", nd);
+  nh->getParam("num_TX", ntx);
+  nh->getParam("f_s", fs);
+  nh->getParam("f_c", fc);
+  nh->getParam("BW", BW);
+  nh->getParam("PRI", PRI);
+  nh->getParam("t_fr", tfr);
+  nh->getParam("max_range", max_range);
+  nh->getParam("range_resolution", vrange);
+  nh->getParam("max_doppler_vel", max_vel);
+  nh->getParam("doppler_vel_resolution", vvel);
 
   ROS_INFO_STREAM("==============================");
   ROS_INFO_STREAM("List of parameters");
@@ -260,6 +266,8 @@ void *DataUARTHandler::sortIncomingData(void)
   int j = 0;
   float maxElevationAngleRatioSquared;
   float maxAzimuthAngleRatio;
+  maxAzimuthAngleRatio = -1;
+  ROS_WARN_STREAM("** max azi angle: " << maxAzimuthAngleRatio);
   int sdk_version;
 
   boost::shared_ptr<pcl::PointCloud<radar_pcl::PointXYZIVR>> RScan(new pcl::PointCloud<radar_pcl::PointXYZIVR>);
@@ -511,8 +519,8 @@ void *DataUARTHandler::sortIncomingData(void)
           // currentDatap += (sizeof(mmwData.detList.rangeIdx));
 
           // Map mmWave sensor coordinates to ROS coordinate system
-          RScan->points[i].x = mmwData.objOut_cartes.y;   // ROS standard X-axis is forward => Y-axis of mmWave sensor
-          RScan->points[i].y = -mmwData.objOut_cartes.x;  // ROS standard Y-axis is left => -(X-axis) of mmWave sensor
+          RScan->points[i].x = mmwData.objOut_cartes.x;   // ROS standard X-axis is forward => Y-axis of mmWave sensor
+          RScan->points[i].y = mmwData.objOut_cartes.y;  // ROS standard Y-axis is left => -(X-axis) of mmWave sensor
           RScan->points[i].z = mmwData.objOut_cartes.z;   // ROS standard Z-axis is up => Z-axis of mmWave sensor
           RScan->points[i].velocity = mmwData.objOut_cartes.velocity;
           RScan->points[i].range = sqrt(radarscan.x * radarscan.x +
@@ -523,8 +531,8 @@ void *DataUARTHandler::sortIncomingData(void)
           radarscan.header.stamp = ros::Time::now();
 
           radarscan.point_id = i;
-          radarscan.x = mmwData.objOut_cartes.y;
-          radarscan.y = -mmwData.objOut_cartes.x;
+          radarscan.x = mmwData.objOut_cartes.x;
+          radarscan.y = mmwData.objOut_cartes.y;
           radarscan.z = mmwData.objOut_cartes.z;
           radarscan.range = sqrt(radarscan.x * radarscan.x +
                                  radarscan.y * radarscan.y +
@@ -540,18 +548,19 @@ void *DataUARTHandler::sortIncomingData(void)
 
         // WTFFF??? => see line 614 (sort of an angular filter)
         // bool notInCone = maxElevationAngleRatioSquared == -1;
-        if (
-              ((maxElevationAngleRatioSquared == -1) ||
-              (((RScan->points[i].z * RScan->points[i].z) / (RScan->points[i].x * RScan->points[i].x + RScan->points[i].y * RScan->points[i].y)) < maxElevationAngleRatioSquared))
-            &&
-              ((maxAzimuthAngleRatio == -1) ||
-              (fabs(RScan->points[i].y / RScan->points[i].x) < maxAzimuthAngleRatio))
-            &&
-            (RScan->points[i].x != 0)
-            )
-        {
-          radar_scan_pub.publish(radarscan);
-        }
+        // if (
+        //       ((maxElevationAngleRatioSquared == -1) ||
+        //       (((RScan->points[i].z * RScan->points[i].z) / (RScan->points[i].x * RScan->points[i].x + RScan->points[i].y * RScan->points[i].y)) < maxElevationAngleRatioSquared))
+        //     &&
+        //       ((maxAzimuthAngleRatio == -1) ||
+        //       (fabs(RScan->points[i].y / RScan->points[i].x) < maxAzimuthAngleRatio))
+        //     &&
+        //     (RScan->points[i].x != 0)
+        //     )
+        // {
+        //   radar_scan_pub.publish(radarscan);
+        // }
+        radar_scan_pub.publish(radarscan);
 
         // Increase counter
         i++;
@@ -623,11 +632,12 @@ void *DataUARTHandler::sortIncomingData(void)
           {
             // Keep point if elevation and azimuth angles are less than specified max values
             // (NOTE: The following calculations are done using ROS standard coordinate system axis definitions where X is forward and Y is left)
-            if (((maxElevationAngleRatioSquared == -1) ||
-                 (((RScan->points[i].z * RScan->points[i].z) / (RScan->points[i].x * RScan->points[i].x +
-                                                                RScan->points[i].y * RScan->points[i].y)) < maxElevationAngleRatioSquared)) &&
-                ((maxAzimuthAngleRatio == -1) || (fabs(RScan->points[i].y / RScan->points[i].x) < maxAzimuthAngleRatio)) &&
-                (RScan->points[i].x != 0))
+            // if (((maxElevationAngleRatioSquared == -1) ||
+            //      (((RScan->points[i].z * RScan->points[i].z) / (RScan->points[i].x * RScan->points[i].x +
+            //                                                     RScan->points[i].y * RScan->points[i].y)) < maxElevationAngleRatioSquared)) &&
+            //     ((maxAzimuthAngleRatio == -1) || (fabs(RScan->points[i].y / RScan->points[i].x) < maxAzimuthAngleRatio)) &&
+            //     (RScan->points[i].x != 0))
+            if (true)
             {
               // ROS_INFO("Kept point");
               // copy: points[i] => points[j]

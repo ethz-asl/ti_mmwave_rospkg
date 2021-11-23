@@ -1,0 +1,129 @@
+<launch>
+
+  <!-- ********************* -->
+  <!-- **** Parameters ***** -->
+  <!-- ********************* -->
+
+  <!-- radar common -->
+  <arg name="max_allowed_elevation_angle_deg" default="60" 
+        doc="Maximum allowed elevation angle in degrees for detected object data [90 >= value > 0]}"/>
+  <arg name="max_allowed_azimuth_angle_deg" default="60"
+        doc="Maximum allowed azimuth angle in degrees for detected object data [90 >= value > 0]}"/>
+
+  <!-- radar 0: 6843AOP -->
+  <arg name="radar_dev_0" value="6843AOP" doc="TI mmWave sensor device type [1843AOP, 6843AOP]"/>
+  <arg name="radar_cfg_0" value="30fps_r5m_rr5cm_v9ms_vr56cms" 
+        doc="TI mmWave sensor device configuration [short_range_0, medium_range_0, long_range_0, etc.]"/>
+  <arg name="mmWaveCLI_0" default="/mmWaveCLI_0"
+        doc="CLI name in case of multiple sensors [/mmWaveCLI_0, /mmWaveCLI_1, /mmWaveCLI_2]"/>
+  <arg name="radar_frame_id_0" default="6843AOP" doc="name of the radar frame"/>
+
+  <!-- radar 1: 1843AOP -->
+  <arg name="radar_dev_1" value="1843AOP" doc="TI mmWave sensor device type [1843AOP, 6843AOP]"/>
+  <arg name="radar_cfg_1" value="r10m_rr6.5cm_v8.3ms_vr26cms__ok" 
+        doc="TI mmWave sensor device configuration [short_range_0, medium_range_0, long_range_0, etc.]"/>
+  <arg name="mmWaveCLI_1" default="/mmWaveCLI_1"
+        doc="CLI name in case of multiple sensors [/mmWaveCLI_0, /mmWaveCLI_1, /mmWaveCLI_2]"/>
+  <arg name="radar_frame_id_1" default="1843AOP" doc="name of the radar frame"/>
+
+
+
+
+  <!-- t265-->
+  <arg name="enable_fisheye1" default="true"/>
+  <arg name="enable_fisheye2" default="true"/>
+
+  <!-- pico flexx-->
+  <!-- to come -->
+
+  <!-- visualization-->
+  <arg name="visualize" value="True"/>
+
+
+  <!-- ********************* -->
+  <!-- **** RADAR      ***** -->
+  <!-- ********************* -->
+
+  <!-- mmWave_Manager node -->
+  <node pkg="ti_mmwave_rospkg" type="ti_mmwave_rospkg" name="ti_mmwave_6843AOP" ns="6843AOP" output="screen">
+    <param name="command_port" value="/dev/ttyUSB2"/>
+    <param name="command_rate" value="115200"/>
+    <param name="data_port" value="/dev/ttyUSB3"/>
+    <param name="data_rate" value="921600"/>
+    <param name="max_allowed_elevation_angle_deg" value="$(arg max_allowed_elevation_angle_deg)"/>
+    <param name="max_allowed_azimuth_angle_deg" value="$(arg max_allowed_azimuth_angle_deg)"/>
+    <param name="frame_id" value="$(arg radar_dev_0)"/>
+    <param name="mmWaveCLI_name" value="$(arg mmWaveCLI_0)"/>
+  </node>
+
+  <!-- mmWaveQuickConfig node (terminates after configuring mmWave sensor) -->
+  <node pkg="ti_mmwave_rospkg" type="mmWaveQuickConfig" name="ti_mmwave_config" ns="6843AOP" 
+        args="$(find ti_mmwave_rospkg)/cfg/$(arg radar_dev_0)/$(arg radar_cfg_0).cfg" output="screen">
+    <param name="mmWaveCLI_name" value="$(arg mmWaveCLI_0)"/>
+  </node>
+
+
+  <!-- mmWave_Manager node -->
+  <node pkg="ti_mmwave_rospkg" type="ti_mmwave_rospkg" name="ti_mmwave_1843AOP" ns="1843AOP" output="screen">
+    <param name="command_port" value="/dev/ttyUSB0"/>
+    <param name="command_rate" value="115200"/>
+    <param name="data_port" value="/dev/ttyUSB1"/>
+    <param name="data_rate" value="921600"/>
+    <param name="max_allowed_elevation_angle_deg" value="$(arg max_allowed_elevation_angle_deg)"/>
+    <param name="max_allowed_azimuth_angle_deg" value="$(arg max_allowed_azimuth_angle_deg)"/>
+    <param name="frame_id" value="$(arg radar_dev_1)"/>
+    <param name="mmWaveCLI_name" value="$(arg mmWaveCLI_1)"/>
+  </node>
+
+  <!-- mmWaveQuickConfig node (terminates after configuring mmWave sensor) -->
+  <node pkg="ti_mmwave_rospkg" type="mmWaveQuickConfig" name="ti_mmwave_config" ns="1843AOP" 
+        args="$(find ti_mmwave_rospkg)/cfg/$(arg radar_dev_1)/$(arg radar_cfg_1).cfg" output="screen">
+    <param name="mmWaveCLI_name" value="$(arg mmWaveCLI_1)"/>
+  </node>
+
+
+  <!-- ********************* -->
+  <!-- **** T265       ***** -->
+  <!-- ********************* -->
+  <!-- <include file="$(find realsense2_camera)/launch/rs_t265.launch">
+    <arg name="enable_fisheye1" value="$(arg enable_fisheye1)"/>
+    <arg name="enable_fisheye2" value="$(arg enable_fisheye2)"/>
+  </include> -->
+
+
+
+
+
+  <!-- ********************* -->
+  <!-- **** Pico Flexx ***** -->
+  <!-- ********************* -->
+  <!-- <include file="$(find pico_flexx_driver)/launch/pico_flexx_driver.launch"/> -->
+
+
+  <!-- ********************* -->
+  <!-- *** Visualization *** -->
+  <!-- ********************* -->
+  <node name="my_rqt_dashboard" pkg="rqt_gui" type="rqt_gui" respawn="false" output="screen" 
+        args="--perspective-file $(find ti_mmwave_rospkg)/cfg/viz/cam_radar.perspective"/>
+  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find realsense2_camera)/rviz/t265.rviz" required="true"/> -->
+
+
+  <!-- ********************* -->
+  <!-- **** Static TF  ***** -->
+  <!-- ********************* -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_pod" 
+        args="0.3 0 0 0 0 0 map pod"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="pod_to_6843AOP" 
+        args="0.3 0 0 0 0 0 pod $(arg radar_frame_id_0)"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="pod_to_1843AOP" 
+        args="0.3 0.2 0 0 0 0 pod $(arg radar_frame_id_1)"/>
+
+
+
+<!-- 
+https://e2e.ti.com/support/sensors-group/sensors/f/sensors-forum/1006096/iwr6843aopevm-spherical-or-cartesian-coordinates-from-people-counting-binaries?tisearch=e2e-sitesearch&keymatch=coordinates%2520aop#
+https://dev.ti.com/tirex/explore/node?node=AIQzhJRYjeBjkiRvsK8EVg__VLyFKFf__LATEST
+https://dev.ti.com/tirex/explore/content/mmwave_industrial_toolbox_4_9_0/labs/people_counting/docs/Tracking_radar_targets_with_multiple_reflection_points.pdf 
+-->
+
+</launch>

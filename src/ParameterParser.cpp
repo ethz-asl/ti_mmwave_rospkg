@@ -40,28 +40,28 @@ namespace ti_mmwave_rospkg
           switch (i)
           {
           case 2:
-            nh.setParam("/ti_mmwave/startFreq", std::stof(token));
+            nh.setParam("startFreq", std::stof(token));
             break;
           case 3:
-            nh.setParam("/ti_mmwave/idleTime", std::stof(token));
+            nh.setParam("idleTime", std::stof(token));
             break;
           case 4:
-            nh.setParam("/ti_mmwave/adcStartTime", std::stof(token));
+            nh.setParam("adcStartTime", std::stof(token));
             break;
           case 5:
-            nh.setParam("/ti_mmwave/rampEndTime", std::stof(token));
+            nh.setParam("rampEndTime", std::stof(token));
             break;
           case 8:
-            nh.setParam("/ti_mmwave/freqSlopeConst", std::stof(token));
+            nh.setParam("freqSlopeConst", std::stof(token));
             break;
           case 10:
-            nh.setParam("/ti_mmwave/numAdcSamples", std::stoi(token));
+            nh.setParam("numAdcSamples", std::stoi(token));
             break;
           case 11:
-            nh.setParam("/ti_mmwave/digOutSampleRate", std::stof(token));
+            nh.setParam("digOutSampleRate", std::stof(token));
             break;
           case 14:
-            nh.setParam("/ti_mmwave/rxGain", std::stof(token));
+            nh.setParam("rxGain", std::stof(token));
             break;
           }
         }
@@ -70,19 +70,19 @@ namespace ti_mmwave_rospkg
           switch (i)
           {
           case 1:
-            nh.setParam("/ti_mmwave/chirpStartIdx", std::stoi(token));
+            nh.setParam("chirpStartIdx", std::stoi(token));
             break;
           case 2:
-            nh.setParam("/ti_mmwave/chirpEndIdx", std::stoi(token));
+            nh.setParam("chirpEndIdx", std::stoi(token));
             break;
           case 3:
-            nh.setParam("/ti_mmwave/numLoops", std::stoi(token));
+            nh.setParam("numLoops", std::stoi(token));
             break;
           case 4:
-            nh.setParam("/ti_mmwave/numFrames", std::stoi(token));
+            nh.setParam("numFrames", std::stoi(token));
             break;
           case 5:
-            nh.setParam("/ti_mmwave/framePeriodicity", std::stof(token));
+            nh.setParam("framePeriodicity", std::stof(token));
             break;
           }
         }
@@ -108,18 +108,20 @@ namespace ti_mmwave_rospkg
     float freqSlopeConst;
     float numAdcSamples;
 
-    nh.getParam("/ti_mmwave/startFreq", startFreq);
-    nh.getParam("/ti_mmwave/idleTime", idleTime);
-    nh.getParam("/ti_mmwave/adcStartTime", adcStartTime);
-    nh.getParam("/ti_mmwave/rampEndTime", rampEndTime);
-    nh.getParam("/ti_mmwave/digOutSampleRate", digOutSampleRate);
-    nh.getParam("/ti_mmwave/freqSlopeConst", freqSlopeConst);
-    nh.getParam("/ti_mmwave/numAdcSamples", numAdcSamples);
+    ROS_WARN_STREAM("***in datahandler: startFreq " << startFreq);
+    nh.getParam("startFreq", startFreq);
+    nh.getParam("idleTime", idleTime);
+    nh.getParam("adcStartTime", adcStartTime);
+    nh.getParam("rampEndTime", rampEndTime);
+    nh.getParam("digOutSampleRate", digOutSampleRate);
+    nh.getParam("freqSlopeConst", freqSlopeConst);
+    nh.getParam("numAdcSamples", numAdcSamples);
 
-    nh.getParam("/ti_mmwave/chirpStartIdx", chirpStartIdx);
-    nh.getParam("/ti_mmwave/chirpEndIdx", chirpEndIdx);
-    nh.getParam("/ti_mmwave/numLoops", numLoops);
-    nh.getParam("/ti_mmwave/framePeriodicity", framePeriodicity);
+    nh.getParam("chirpStartIdx", chirpStartIdx);
+    nh.getParam("chirpEndIdx", chirpEndIdx);
+    nh.getParam("numLoops", numLoops);
+    nh.getParam("framePeriodicity", framePeriodicity);
+    ROS_WARN_STREAM("***in datahandler: startFreq " << startFreq);
 
     int ntx = chirpEndIdx - chirpStartIdx + 1;
     int nd = numLoops;
@@ -137,16 +139,21 @@ namespace ti_mmwave_rospkg
     float max_vel = c0 / (2 * fc * PRI) / ntx;
     float vvel = max_vel / nd;
 
-    nh.setParam("/ti_mmwave/num_TX", ntx);
-    nh.setParam("/ti_mmwave/f_s", fs);
-    nh.setParam("/ti_mmwave/f_c", fc);
-    nh.setParam("/ti_mmwave/BW", BW);
-    nh.setParam("/ti_mmwave/PRI", PRI);
-    nh.setParam("/ti_mmwave/t_fr", tfr);
-    nh.setParam("/ti_mmwave/max_range", max_range);
-    nh.setParam("/ti_mmwave/range_resolution", vrange);
-    nh.setParam("/ti_mmwave/max_doppler_vel", max_vel);
-    nh.setParam("/ti_mmwave/doppler_vel_resolution", vvel);
+    ROS_WARN_STREAM("***in datahandler: num_TX " << ntx);
+    nh.setParam("num_TX", ntx);
+    nh.setParam("f_s", fs);
+    nh.setParam("f_c", fc);
+    nh.setParam("BW", BW);
+    nh.setParam("PRI", PRI);
+    nh.setParam("t_fr", tfr);
+    nh.setParam("max_range", max_range);
+    nh.setParam("range_resolution", vrange);
+    nh.setParam("max_doppler_vel", max_vel);
+    nh.setParam("doppler_vel_resolution", vvel);
+
+    int asdf;
+    nh.getParam("num_TX", asdf);
+    ROS_WARN_STREAM("***in datahandler: num_TX " << asdf);
   }
 
 }  // namespace ti_mmwave_rospkg

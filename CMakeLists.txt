@@ -178,6 +178,8 @@ add_dependencies(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}  # (naming with "_node" more standard?)
   ${catkin_LIBRARIES}
   ${serial_LIBRARIES}
+  # pthread
+  Threads::Threads
   mmwave
 )
 
