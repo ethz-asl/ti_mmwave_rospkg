@@ -108,7 +108,6 @@ namespace ti_mmwave_rospkg
     float freqSlopeConst;
     float numAdcSamples;
 
-    ROS_WARN_STREAM("***in datahandler: startFreq " << startFreq);
     nh.getParam("startFreq", startFreq);
     nh.getParam("idleTime", idleTime);
     nh.getParam("adcStartTime", adcStartTime);
@@ -121,7 +120,6 @@ namespace ti_mmwave_rospkg
     nh.getParam("chirpEndIdx", chirpEndIdx);
     nh.getParam("numLoops", numLoops);
     nh.getParam("framePeriodicity", framePeriodicity);
-    ROS_WARN_STREAM("***in datahandler: startFreq " << startFreq);
 
     int ntx = chirpEndIdx - chirpStartIdx + 1;
     int nd = numLoops;
@@ -139,7 +137,6 @@ namespace ti_mmwave_rospkg
     float max_vel = c0 / (2 * fc * PRI) / ntx;
     float vvel = max_vel / nd;
 
-    ROS_WARN_STREAM("***in datahandler: num_TX " << ntx);
     nh.setParam("num_TX", ntx);
     nh.setParam("f_s", fs);
     nh.setParam("f_c", fc);
@@ -150,10 +147,6 @@ namespace ti_mmwave_rospkg
     nh.setParam("range_resolution", vrange);
     nh.setParam("max_doppler_vel", max_vel);
     nh.setParam("doppler_vel_resolution", vvel);
-
-    int asdf;
-    nh.getParam("num_TX", asdf);
-    ROS_WARN_STREAM("***in datahandler: num_TX " << asdf);
   }
 
 }  // namespace ti_mmwave_rospkg

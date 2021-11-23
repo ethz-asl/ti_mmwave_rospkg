@@ -103,9 +103,9 @@
   <!-- ********************* -->
   <!-- *** Visualization *** -->
   <!-- ********************* -->
-  <node name="my_rqt_dashboard" pkg="rqt_gui" type="rqt_gui" respawn="false" output="screen" 
-        args="--perspective-file $(find ti_mmwave_rospkg)/cfg/viz/cam_radar.perspective"/>
-  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find realsense2_camera)/rviz/t265.rviz" required="true"/> -->
+  <!-- <node name="my_rqt_dashboard" pkg="rqt_gui" type="rqt_gui" respawn="false" output="screen" 
+        args="&#45;&#45;perspective-file $(find ti_mmwave_rospkg)/cfg/viz/cam_radar.perspective"/> -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ti_mmwave_rospkg)/cfg/viz/rviz.rviz" required="true"/>
 
 
   <!-- ********************* -->
@@ -117,13 +117,5 @@
         args="0.3 0 0 0 0 0 pod $(arg radar_frame_id_0)"/>
   <node pkg="tf2_ros" type="static_transform_publisher" name="pod_to_1843AOP" 
         args="0.3 0.2 0 0 0 0 pod $(arg radar_frame_id_1)"/>
-
-
-
-<!-- 
-https://e2e.ti.com/support/sensors-group/sensors/f/sensors-forum/1006096/iwr6843aopevm-spherical-or-cartesian-coordinates-from-people-counting-binaries?tisearch=e2e-sitesearch&keymatch=coordinates%2520aop#
-https://dev.ti.com/tirex/explore/node?node=AIQzhJRYjeBjkiRvsK8EVg__VLyFKFf__LATEST
-https://dev.ti.com/tirex/explore/content/mmwave_industrial_toolbox_4_9_0/labs/people_counting/docs/Tracking_radar_targets_with_multiple_reflection_points.pdf 
--->
 
 </launch>
