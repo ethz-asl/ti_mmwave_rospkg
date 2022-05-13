@@ -164,6 +164,14 @@ Note: As serial connection and the original code, you need to launch devices sep
   roslaunch ti_mmwave_rospkg camera_overlay.launch
   ```
 
+## Launch two radars
+```
+roslaunch ti_mmwave_rospkg ti_radar.launch mav_name:=zero command_port:=/dev/ttyUSB0 data_port:=/dev/ttyUSB1 visualize:=True radar_pose:=front
+```
+```
+roslaunch ti_mmwave_rospkg ti_radar.launch mav_name:=one command_port:=/dev/ttyUSB2 data_port:=/dev/ttyUSB3 visualize:=false radar_pose:=right
+```
+
 ## Changelog
 
 ```
