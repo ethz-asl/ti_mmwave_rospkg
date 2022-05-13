@@ -4,9 +4,12 @@
   <arg name="log_output" default="screen"/>
   <arg name="radar_type" default="1843AOP" doc="[1843AOP, 6843AOP]"/>
   <arg name="radar_frame_id" default="ti_mmwave"/>
+  <arg name="command_port" default="/dev/ttyUSB0" />
+  <arg name="data_port" default="/dev/ttyUSB1" />
 
   <!-- visualization-->
-  <arg name="visualize" value="True"/>
+  <arg name="visualize" default="False"/>
+  <arg name="radar_pose" default="front"/>
 
   <!-- record bag -->
   <arg name="record_bag" default="False"/>
@@ -21,17 +24,17 @@
     <group if="$(eval radar_type == '1843AOP')">
       <!-- 1. mmWaveQuickConfig node (terminates after configuring mmWave sensor) -->
       <node pkg="ti_mmwave_rospkg" type="mmWaveQuickConfig" name="mmWaveQuickConfig" 
-            args="$(find ti_mmwave_rospkg)/cfg/1843AOP/1843AOP_shortRange_30fps.cfg" output="$(arg log_output)"/>
+            args="$(find ti_mmwave_rospkg)/cfg/1843AOP/1843AOP_velocity_10fps.cfg" output="$(arg log_output)"/>
 
       <!-- 2. the actual radar node -->
       <node pkg="ti_mmwave_rospkg" type="ti_mmwave_rospkg" name="ti_mmwave" output="$(arg log_output)">
-        <param name="command_port" value="/dev/ttyUSB.1843cli"/>
+        <param name="command_port" value="$(arg command_port)"/>
         <param name="command_rate" value="115200"/>
-        <param name="data_port" value="/dev/ttyUSB.1843data"/>
+        <param name="data_port" value="$(arg data_port)"/>
         <param name="data_rate" value="921600"/>
         <!-- <param name="max_allowed_elevation_angle_deg" value="$(arg max_allowed_elevation_angle_deg)"/> -->
         <!-- <param name="max_allowed_azimuth_angle_deg" value="$(arg max_allowed_azimuth_angle_deg)"/> -->
-        <param name="frame_id" value="$(arg radar_frame_id)"/>
+        <param name="frame_id" value="$(arg radar_frame_id)_$(arg radar_pose)"/>
       </node>
     </group>
 
@@ -48,7 +51,7 @@
         <param name="data_rate" value="921600"/>
         <!-- <param name="max_allowed_elevation_angle_deg" value="$(arg max_allowed_elevation_angle_deg)"/> -->
         <!-- <param name="max_allowed_azimuth_angle_deg" value="$(arg max_allowed_azimuth_angle_deg)"/> -->
-        <param name="frame_id" value="$(arg radar_frame_id)"/>
+        <param name="frame_id" value="$(arg radar_frame_id)_$(arg radar_pose)"/>
       </node>
     </group>
   </group>
@@ -57,7 +60,12 @@
   <!-- ********************* -->
   <!-- **** Static TF  ***** -->
   <!-- ********************* -->
-  <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_radar" args="0.1 0 0 0 0 0 map $(arg radar_frame_id)"/>
+  <group if="$(eval radar_pose == 'front')">
+    <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_radar_front" args="0.1 0 0 0 0 0 map $(arg radar_frame_id)_$(arg radar_pose)"/>
+  </group>
+  <group if="$(eval radar_pose == 'right')">
+    <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_radar_right" args="0.0 -0.1 0 -1.5708 0 0 map $(arg radar_frame_id)_$(arg radar_pose)"/>
+  </group>
 
 
   <!-- ********************* -->
