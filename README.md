@@ -28,13 +28,17 @@ Preliminary steps:
 
 1. Connect the micro-USB (the one closer to the antenna) of the AOP sensor to the host machine running ROS.
 2. Enable the `command` and `data` ports on Linux:
-  
   ```shell
   sudo chmod 666 /dev/ttyUSB0
   sudo chmod 666 /dev/ttyUSB1
   ```
-  
-3. Test your sensor with the [Demo Visualizer](https://dev.ti.com/gallery/view/mmwave/mmWave_Demo_Visualizer/ver/3.5.0/) to check the connectivity and basic functionality. You can also create your own configuration file for your use-case (fps, range, velocity, etc.) with the visualizer.
+3. Enable access to USB devices for user
+  ```shell
+  sudo adduser $USER dialout
+  ```
+
+4. Test your sensor with the [Demo Visualizer](https://dev.ti.com/gallery/view/mmwave/mmWave_Demo_Visualizer/ver/3.5.0/) to check the connectivity and basic functionality. You can also create your own configuration file for your use-case (fps, range, velocity, etc.) with the visualizer.
+  * Make sure you follow the install instructions. (install plugin and tiCloudAgent)
 
 Clone, build and launch:
 
@@ -44,7 +48,7 @@ Clone, build and launch:
   git clone https://github.com/ethz-asl/ti_mmwave_rospkg.git
   git clone https://github.com/wjwwood/serial.git
   ```
-  
+
 5. Go back to `<workspace dir>`, then build and source:
 
   ```shell
@@ -61,7 +65,7 @@ Clone, build and launch:
   Note: If you set `visualize` to `True`, then rviz should start and you should see something like the following:
 
   ![rviz](auxiliary/rviz_pointCloud.jpg "Rviz")
-  
+
 7. ROS topics can be accessed as follows:
   ```shell
   rostopic list
@@ -72,7 +76,7 @@ Clone, build and launch:
   rosparam list
   rosparam get /ti_mmwave/max_doppler_vel
   ```
-  
+
 ## Message format
 
 The `radar_scan_pcl` is a customized point cloud topic, consisting of:
@@ -136,13 +140,13 @@ Old:
 2. To avoid serial port conflict, you need to launch devices separately. So for the first device (it will open rviz):
 
   ```
-  roslaunch ti_mmwave_rospkg multi_1642_0.launch 
+  roslaunch ti_mmwave_rospkg multi_1642_0.launch
   ```
 
 3. Change radars' location in first three arguments `<node pkg="tf" type="static_transform_publisher" name="radar_baselink_0" args="0 -1 0 0 0 0 ti_mmwave_pcl ti_mmwave_0 100"/>` (stands for x,y,z for positions) in launch file `multi_1642_1.launch`. And launch second device:
 
   ```
-  roslaunch ti_mmwave_rospkg multi_1642_1.launch 
+  roslaunch ti_mmwave_rospkg multi_1642_1.launch
   ```
 
 Note: As serial connection and the original code, you need to launch devices separately using different launch files.
@@ -189,7 +193,7 @@ Strengthened code.
 v3.0.0
 Added README.
 Improved rviz looking for point cloud data.
-Added support for multiple radars working together. 
+Added support for multiple radars working together.
 Improved radar's all around working conditions.
 
 v2.0.0

@@ -1,6 +1,6 @@
 <launch>
   <!-- Input arguments -->
-  <arg name="mav_name" default="zero"/>
+  <arg name="mav_name" default="mmwave"/>
   <arg name="log_output" default="screen"/>
   <arg name="radar_type" default="1843AOP" doc="[1843AOP, 6843AOP]"/>
   <arg name="radar_frame_id" default="ti_mmwave"/>
@@ -9,9 +9,10 @@
   <arg name="visualize" value="True"/>
 
   <!-- record bag -->
-  <arg name="record_bag" default="False"/>
+  <arg name="record_bag" default="True"/>
   <arg name="bag_base" default="$(env HOME)/datasets/radar/" />
 
+  <arg name="vicon" value="True"/>
 
   <!-- ********************* -->
   <!-- **** RADAR      ***** -->
@@ -20,14 +21,14 @@
 
     <group if="$(eval radar_type == '1843AOP')">
       <!-- 1. mmWaveQuickConfig node (terminates after configuring mmWave sensor) -->
-      <node pkg="ti_mmwave_rospkg" type="mmWaveQuickConfig" name="mmWaveQuickConfig" 
+      <node pkg="ti_mmwave_rospkg" type="mmWaveQuickConfig" name="mmWaveQuickConfig"
             args="$(find ti_mmwave_rospkg)/cfg/1843AOP/1843AOP_shortRange_30fps.cfg" output="$(arg log_output)"/>
 
       <!-- 2. the actual radar node -->
       <node pkg="ti_mmwave_rospkg" type="ti_mmwave_rospkg" name="ti_mmwave" output="$(arg log_output)">
-        <param name="command_port" value="/dev/ttyUSB.1843cli"/>
+        <param name="command_port" value="/dev/ttyUSB0"/>
         <param name="command_rate" value="115200"/>
-        <param name="data_port" value="/dev/ttyUSB.1843data"/>
+        <param name="data_port" value="/dev/ttyUSB1"/>
         <param name="data_rate" value="921600"/>
         <!-- <param name="max_allowed_elevation_angle_deg" value="$(arg max_allowed_elevation_angle_deg)"/> -->
         <!-- <param name="max_allowed_azimuth_angle_deg" value="$(arg max_allowed_azimuth_angle_deg)"/> -->
@@ -42,9 +43,9 @@
 
       <!-- 2. the actual radar node -->
       <node pkg="ti_mmwave_rospkg" type="ti_mmwave_rospkg" name="ti_mmwave" output="$(arg log_output)">
-        <param name="command_port" value="/dev/ttyUSB.6843cli"/>
+        <param name="command_port" value="/dev/ttyUSB0"/>
         <param name="command_rate" value="115200"/>
-        <param name="data_port" value="/dev/ttyUSB.6843data"/>
+        <param name="data_port" value="/dev/ttyUSB1"/>
         <param name="data_rate" value="921600"/>
         <!-- <param name="max_allowed_elevation_angle_deg" value="$(arg max_allowed_elevation_angle_deg)"/> -->
         <!-- <param name="max_allowed_azimuth_angle_deg" value="$(arg max_allowed_azimuth_angle_deg)"/> -->
@@ -59,6 +60,9 @@
   <!-- ********************* -->
   <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_radar" args="0.1 0 0 0 0 0 map $(arg radar_frame_id)"/>
 
+  <include file="$(find ros_vrpn_client)/launch/asl_vicon.launch" if="$(arg vicon)">
+    <arg name="object_name" value="$(arg mav_name)"/>
+  </include>
 
   <!-- ********************* -->
   <!-- *** Visualization *** -->
@@ -74,9 +78,9 @@
   <group if="$(arg record_bag)">
     <!-- Rosbag  -->
     <node pkg="rosbag" type="record" name="rosbag_record_sensors" output="screen"
-          args="--buffsize=0 
+          args="--buffsize=0
                 --output-prefix=$(arg bag_base)sensors
-                -e '(.*)tf(.*)|(.*)ti_mmwave/radar_scan_pcl(.*)|(.*)/camera/(.*)'
+                -e '(.*)tf(.*)|(.*)ti_mmwave/radar_scan_pcl(.*)|(.*)/camera/(.*)|(.*)/vrpn_client(.*)'
                 -x '(.*)theora(.*)|(.*)compressed(.*)'"/>
   </group>
 </launch>
