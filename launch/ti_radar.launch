@@ -12,7 +12,7 @@
   <arg name="record_bag" default="True"/>
   <arg name="bag_base" default="$(env HOME)/datasets/radar/" />
 
-  <arg name="vicon" value="True"/>
+  <arg name="vicon" default="True"/>
 
   <!-- ********************* -->
   <!-- **** RADAR      ***** -->
